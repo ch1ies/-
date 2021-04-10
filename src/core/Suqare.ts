@@ -4,9 +4,12 @@ import { IViewer, Point } from "./type"
  * 小方块
  */
 export class Square {
-  // private _point: Point // 逻辑坐标x
+  private _point: Point = {
+    x: 0,
+    y: 0
+  } // 逻辑坐标x
 //    private _y: Point  // 逻辑坐标y
-  //  private _color: string
+   private _color: string = "white"
 
   // 属性： 显示者，管理显示， 对外开放
   private _viewer?: IViewer
@@ -14,6 +17,10 @@ export class Square {
       return this._viewer
   }
   public set viewer (val) {
+    if (val) {
+      console.log(val)
+      val.show() // 手动调用，解决重新创建时手动调用
+    }
     this._viewer = val
   }
    public get point() {
@@ -30,8 +37,8 @@ export class Square {
    public get color() {
        return this._color
    }
-   public constructor(private _point: Point, private _color: string) {
-       
+   public set color(c) {
+    this._color = c
    }
 }
 

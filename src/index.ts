@@ -1,29 +1,35 @@
 import { Square } from "./core/Suqare";
-import { IViewer } from "./core/type";
+import { SquarePageViewer } from "./core/viewer/SquarePageViewer";
+import $ from 'jquery'
 
-// 输出控制台类，实现具体的接口
-// Square 实现核心逻辑， SquareConsoleViewer 实现接口,提供方法
-// Square 的实例的属性调用 SquareConsoleViewer 提供的方法
-// 符合 单一职责原则，开闭原则
-class SquareConsoleViewer implements IViewer {
-    constructor(private square:Square
-        ) {
-    } 
+const sq = new Square()
+sq.viewer = new SquarePageViewer(sq, $("#root"))
 
-    show(): void {
-        console.log(this.square.point.x + this.square.color)
-    }
-    remove(): void {
-    }
-    
+sq.color = "white"
+sq.point = {
+    x: 3,
+    y: 0
 }
-const s = new Square({x:0, y:0},"color")
 
-s.viewer = new SquareConsoleViewer(s)  // 连接两个类功能的桥梁
-
-s.viewer.show()
-
-s.point = {
-    x : 3,
-    y: 12
-}
+$('#btnDown').on('click',function() {
+    sq.point = {
+        x: sq.point.x,
+        y: sq.point.y + 1
+    }
+})
+$('#btnMove').on('click', function() {
+    console.log('121221')
+    sq.viewer?.remove()
+})
+$('#btnAdd').on('click', () => {
+    sq.viewer = new SquarePageViewer(sq, $('#root'))
+    // sq.viewer.show() //或者写在构造函数中
+})
+// setInterval(() => {
+//     console.log("exexur")
+//     sq.point = {
+//         x: sq.point.x + 1,
+//         y: sq.point.y + 1
+//     }
+//     console.log(sq.point, '------')
+// },1000)

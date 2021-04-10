@@ -5,5 +5,5 @@ export interface Point {
 
 export interface IViewer {
     show():void   //显示
-    remove():void  // 移除
+    remove():void  // 移除,不再显示
 }
