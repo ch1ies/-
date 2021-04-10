@@ -18,7 +18,6 @@ export class Square {
   }
   public set viewer (val) {
     if (val) {
-      console.log(val)
       val.show() // 手动调用，解决重新创建时手动调用
     }
     this._viewer = val

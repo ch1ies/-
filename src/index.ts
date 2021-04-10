@@ -1,35 +1,46 @@
-import { Square } from "./core/Suqare";
 import { SquarePageViewer } from "./core/viewer/SquarePageViewer";
 import $ from 'jquery'
+import { SquareGroup } from "./core/SquareGroup";
 
-const sq = new Square()
-sq.viewer = new SquarePageViewer(sq, $("#root"))
+/**
+ * 组合方块
+ */
+const group = new SquareGroup([
+    { x: 0, y: -1 }, { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 1 }
+], { x: 3, y: 2 }, "red")
 
-sq.color = "white"
-sq.point = {
-    x: 3,
-    y: 0
-}
+group.squares.forEach(sq => {
+    sq.viewer = new SquarePageViewer(sq, $("#root"))
+})
 
+
+// 更改中心点坐标
+// 向下移动
 $('#btnDown').on('click',function() {
-    sq.point = {
-        x: sq.point.x,
-        y: sq.point.y + 1
+    group.centerPoint = {
+        x:group.centerPoint.x,
+        y: group.centerPoint.y + 1
     }
 })
-$('#btnMove').on('click', function() {
-    console.log('121221')
-    sq.viewer?.remove()
+// 向左移动
+$('#btnLeft').on('click', function() {
+    group.centerPoint = {
+        x:group.centerPoint.x -1,
+        y: group.centerPoint.y
+    }
 })
-$('#btnAdd').on('click', () => {
-    sq.viewer = new SquarePageViewer(sq, $('#root'))
-    // sq.viewer.show() //或者写在构造函数中
+// 向右移动
+$('#btnRight').on('click', function() {
+    group.centerPoint = {
+        x:group.centerPoint.x + 1,
+        y: group.centerPoint.y
+    }
 })
-// setInterval(() => {
-//     console.log("exexur")
-//     sq.point = {
-//         x: sq.point.x + 1,
-//         y: sq.point.y + 1
-//     }
-//     console.log(sq.point, '------')
-// },1000)
+
+// 向上移动
+$('#btnUp').on('click', function() {
+    group.centerPoint = {
+        x:group.centerPoint.x,
+        y: group.centerPoint.y - 1
+    }
+})

@@ -36,7 +36,6 @@ export class SquarePageViewer implements IViewer{
     }
     remove(): void {
         if (this.dom && !this.isRemove) {
-            console.log('remove----')
             this.dom.remove()
             this.isRemove = true
         }

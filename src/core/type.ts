@@ -7,3 +7,7 @@ export interface IViewer {
     show():void   //显示
     remove():void  // 移除,不再显示
 }
+/**
+ * 形状
+ */
+export type Shape = Point[]
