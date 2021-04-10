@@ -1,7 +1,7 @@
 import { SquarePageViewer } from "./core/viewer/SquarePageViewer";
 import $ from 'jquery'
-import { createTeries, LineShape } from "./core/viewer/Teries";
-import { TeriesRule } from "./core/viewer/TeriesRule";
+import { createTeries, LineShape } from "./core/Teries";
+import { TeriesRule } from "./core/TeriesRule";
 import { Direction } from "./core/type";
 
 /**
@@ -27,6 +27,11 @@ $('#btnLeft').on('click', function() {
 // 向右移动
 $('#btnRight').on('click', function() {
     TeriesRule.move(Teries, Direction.right)
+})
+$('#rotateClock').on('click', () => {
+    // const newShape = Teries.afterRorateShape()
+    // console.log(newShape, Teries.shape)
+    TeriesRule.rotate(Teries)
 })
 
 // 向上移动

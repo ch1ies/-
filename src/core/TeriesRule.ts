@@ -1,5 +1,5 @@
-import { SquareGroup } from "../SquareGroup";
-import { Point, Shape, Direction } from "../type";
+import { SquareGroup } from "./SquareGroup";
+import { Point, Shape, Direction } from "./type";
 import GameConfig from "./GameConfig";
 
 
@@ -81,6 +81,15 @@ export class TeriesRule {
                 break
             }
 
+        }
+    }
+    static rotate(teries:SquareGroup):boolean {
+        const newShape = teries.afterRorateShape() // 得到旋转之后的形状
+        if (this.canIMove(newShape, teries.centerPoint)) {
+            teries.rotate()
+            return true
+        } else {
+            return false
         }
     }
 }
