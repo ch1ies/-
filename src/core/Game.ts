@@ -8,6 +8,9 @@ import { Direction, GameStatus, GameViewer } from "./type";
 export class Game {
     // 游戏状态
     private gameStatus:GameStatus = GameStatus.init
+    public get GameStatus() {
+        return this.gameStatus
+    }
     // 当前玩家操作的方块
     private curTeris?: SquareGroup
     // 下一个方块
@@ -15,16 +18,39 @@ export class Game {
     //计时器
     private _timer?:number | NodeJS.Timeout
     // 自动下落的间隔时间
-    private _duration:number = 1000
+    private _duration:number
     // 当前游戏中已存在的小方块
     private exists:Square[] = []
     // 积分
-    private score:number = 0
+    private _score:number = 0
+
+    public get score() {
+        return this._score
+    }
+    public set score(val) {
+        this._score = val
+        this._viewer.showScore(val)
+        const level = GameConfig.levels.filter(it => it.score <= val).pop()!
+        if (level.duration === this._duration) {
+            return
+        }
+        // 级别发生变化
+        if (this._timer) {
+            clearInterval(this._timer as number)
+            this._duration = level.duration
+            this._timer = undefined
+            this.autoDrop()
+        } 
+
+    }
     constructor(private _viewer: GameViewer) {
+        this._duration = GameConfig.levels[0].duration
         this.nextTeris = createTeries({x:0, y:0}) // 没有实际含义的代码，ts检测不到在构造函数中调用方法
         // this.resetCenterPoint(GameConfig.nextSize.width, this.nextTeris)
         // this._viewer.showNext(this.nextTeris)
         this.createNext()
+        this._viewer.init(this)
+        this._viewer.showScore(this._score)
     }
     private createNext() {
         this.nextTeris = createTeries({x:0, y:0})
@@ -62,6 +88,7 @@ export class Game {
         }
         // 控制当前方块自由下落
         this.autoDrop()
+        this._viewer.onGameStart()
     }
     /**
      * 切换方块
@@ -80,6 +107,7 @@ export class Game {
             this.gameStatus = GameStatus.over
             clearInterval(this._timer as number)
             this._timer = undefined
+            this._viewer.onGameOver()
             return
         }
         this.createNext()
@@ -127,6 +155,7 @@ export class Game {
             this.gameStatus = GameStatus.pause
             clearInterval(this._timer as number)
             this._timer = undefined
+            this._viewer.onGamePause()
 
         }
     }
