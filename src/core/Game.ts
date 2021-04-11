@@ -11,16 +11,36 @@ export class Game {
     // 当前玩家操作的方块
     private curTeris?: SquareGroup
     // 下一个方块
-    private nextTeris: SquareGroup = createTeries({x:0, y:0})
+    private nextTeris: SquareGroup
     //计时器
     private _timer?:number | NodeJS.Timeout
     // 自动下落的间隔时间
     private _duration:number = 1000
     // 当前游戏中已存在的小方块
     private exists:Square[] = []
+    // 积分
+    private score:number = 0
     constructor(private _viewer: GameViewer) {
+        this.nextTeris = createTeries({x:0, y:0}) // 没有实际含义的代码，ts检测不到在构造函数中调用方法
+        // this.resetCenterPoint(GameConfig.nextSize.width, this.nextTeris)
+        // this._viewer.showNext(this.nextTeris)
+        this.createNext()
+    }
+    private createNext() {
+        this.nextTeris = createTeries({x:0, y:0})
         this.resetCenterPoint(GameConfig.nextSize.width, this.nextTeris)
         this._viewer.showNext(this.nextTeris)
+    }
+    private init() {
+        this.exists.forEach(sq => {
+            if (sq.viewer) {
+                sq.viewer.remove()
+            }
+        })
+        this.exists = []
+        this.createNext()
+        this.curTeris = undefined
+        this.score = 0
     }
     /**
      * 游戏开始
@@ -29,6 +49,11 @@ export class Game {
         // 游戏状态的改变
         if(this.gameStatus === GameStatus.playing) {
             return
+        }
+        // 从游戏结束到开始
+        if (this.gameStatus === GameStatus.over) {
+            // 初始化操作
+            this.init()
         }
         this.gameStatus = GameStatus.playing
         // 给当前的方块赋值
@@ -43,11 +68,22 @@ export class Game {
      */
     private switchTeris() {
         this.curTeris = this.nextTeris
+        this.curTeris.squares.forEach(sq => {
+            if (sq.viewer) {
+                sq.viewer.remove()
+            }
+        })
         this.resetCenterPoint(GameConfig.panelSize.width, this.curTeris)
-        this.nextTeris = createTeries({x:0, y:0})
-        this.resetCenterPoint(GameConfig.nextSize.width, this.nextTeris)
+        // 有可能出问题，当前方块一出现时，就已经跟之前的方块重叠了
+        if (!TeriesRule.canIMove(this.curTeris.shape, this.curTeris.centerPoint, this.exists)) {
+            // 游戏结束
+            this.gameStatus = GameStatus.over
+            clearInterval(this._timer as number)
+            this._timer = undefined
+            return
+        }
+        this.createNext()
         this._viewer.switch(this.curTeris)
-        this._viewer.showNext(this.nextTeris)
     }
     /**
      * 方块自由下落
@@ -77,10 +113,10 @@ export class Game {
         const y = 0
         teries.centerPoint = {x, y}
         while (teries.squares.some( it => it.point.y < 0)) {
-            teries.squares.forEach( sq => sq.point = {
-                x: sq.point.x,
-                y: sq.point.y + 1
-            })
+            teries.centerPoint = {
+                x: teries.centerPoint.x,
+                y: teries.centerPoint.y + 1
+            }
         }
     }
     /**
@@ -139,10 +175,25 @@ export class Game {
         // console.log(this.exists, 'exist---------')
         // 处理移除
         const num = TeriesRule.deleteSquare(this.exists)
+        // 增加积分
+        this.addScore(num)
         console.log(num)
         // 切换方块
         this.switchTeris()
 
+    }
+    private addScore(lineNum: number) {
+        if (lineNum === 0) {
+            return
+        } else if (lineNum === 1) {
+            this.score += 10
+        } else if (lineNum === 2) {
+            this.score +=20
+        } else if (lineNum ===3) {
+            this.score += 50
+        } else if (lineNum ===4) {
+        this.score += 100
+    }
     }
 
 }

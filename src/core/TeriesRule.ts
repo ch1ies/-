@@ -120,13 +120,13 @@ export class TeriesRule {
         // 3, 循环判断每一行是否可以消除
         let num = 0
         for( let i = minY; i <= maxY; i++) {
-            if (this.deketeLine(exists, i)) {
+            if (this.deleteLine(exists, i)) {
                 num++ 
             }
         }
         return num
     }
-    private static deketeLine(exists:Square[], y:number):boolean {
+    private static deleteLine(exists:Square[], y:number):boolean {
         const squares = this.getLineSquare(exists, y)
             if (squares.length === GameConfig.panelSize.width) {
                 // 这一行可以消除
@@ -135,16 +135,16 @@ export class TeriesRule {
                     if(sq.viewer) {
                         sq.viewer.remove()
                     }
-                    // 2. 剩下的，比y坐标的方块y + 1
-                    exists.filter(sq => sq.point.y < y).forEach(sq => {
-                        sq.point = {
-                            x: sq.point.x,
-                            y: sq.point.y + 1
-                        }
-                    })
                     // 从数组中移除
                     const index = exists.indexOf(sq)
                     exists.splice(index, 1)
+                })
+                // 2. 剩下的，比y坐标的方块y + 1
+                exists.filter(sq => sq.point.y < y).forEach(sq => {
+                    sq.point = {
+                        x: sq.point.x,
+                        y: sq.point.y + 1
+                    }
                 })
                 return true
             }
