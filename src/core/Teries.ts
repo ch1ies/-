@@ -109,12 +109,12 @@ export class LineShape extends SquareGroup {
 
 // ]
 export const shapes = [
-    TShape,
-    SShape,
-    SShape,
-    LShape,
+    // TShape,
+    // SShape,
+    // SShape,
+    // LShape,
     STShape,
-    LineShape
+    // LineShape
 ]
 export const Colors = [
     "red",

@@ -112,8 +112,8 @@ export class Game {
     control_down() {
         if(this.curTeris && this.gameStatus === GameStatus.playing) {
             TeriesRule.move(this.curTeris, Direction.down, this.exists)
-            // 触底
-            this.hitbutton()
+            //触底 不需要判断
+            // this.hitbutton()
         }  
     }
     control_rotate() {
@@ -129,13 +129,20 @@ export class Game {
         }  
     }
     
+    /**
+     * 触底处理
+     */
     private hitbutton() {
         // 将当前的俄罗斯方块包含的小方块，加入到已存在的方块数组中
         // this.exists.push(...this.curTeris!.squares)
         this.exists = this.exists.concat(this.curTeris!.squares)
-        console.log(this.exists, 'exist---------')
+        // console.log(this.exists, 'exist---------')
+        // 处理移除
+        const num = TeriesRule.deleteSquare(this.exists)
+        console.log(num)
         // 切换方块
         this.switchTeris()
+
     }
 
 }

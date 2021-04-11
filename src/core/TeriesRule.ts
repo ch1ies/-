@@ -99,4 +99,55 @@ export class TeriesRule {
             return false
         }
     }
+    /**
+     * 根据y坐标，得到所有y坐标为此值的方块
+     * @param exists 
+     * @param y 
+     */
+    private static getLineSquare(exists:Square[], y:number) {
+        return exists.filter(sq => sq.point.y === y)
+    }
+    /**
+     * 从已存在的方块中进行消除，并返回消除的行数
+     * @param exists 
+     */
+    static deleteSquare(exists:Square[]):number {
+        // 1. 获得y坐标数组
+        const ys = exists.map(sq => sq.point.y)
+        // 2. 获得最大，最小的y坐标
+        const maxY = Math.max(...ys)
+        const minY = Math.min(...ys)
+        // 3, 循环判断每一行是否可以消除
+        let num = 0
+        for( let i = minY; i <= maxY; i++) {
+            if (this.deketeLine(exists, i)) {
+                num++ 
+            }
+        }
+        return num
+    }
+    private static deketeLine(exists:Square[], y:number):boolean {
+        const squares = this.getLineSquare(exists, y)
+            if (squares.length === GameConfig.panelSize.width) {
+                // 这一行可以消除
+                squares.forEach(sq => {
+                    // 1. 从界面中移除
+                    if(sq.viewer) {
+                        sq.viewer.remove()
+                    }
+                    // 2. 剩下的，比y坐标的方块y + 1
+                    exists.filter(sq => sq.point.y < y).forEach(sq => {
+                        sq.point = {
+                            x: sq.point.x,
+                            y: sq.point.y + 1
+                        }
+                    })
+                    // 从数组中移除
+                    const index = exists.indexOf(sq)
+                    exists.splice(index, 1)
+                })
+                return true
+            }
+            return false
+    }
 }
