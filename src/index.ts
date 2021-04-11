@@ -1,43 +1,28 @@
-import { SquarePageViewer } from "./core/viewer/SquarePageViewer";
+import { Game } from "./core/Game";
+import { GamePaheViewer } from "./core/viewer/GamePageViewer";
 import $ from 'jquery'
-import { createTeries, LineShape } from "./core/Teries";
-import { TeriesRule } from "./core/TeriesRule";
-import { Direction } from "./core/type";
 
-/**
- * 组合方块
- */
-const Teries = createTeries({x:3, y:2})
+const g = new Game(new GamePaheViewer())
+$("#btnStart").on('click', () => {
+  g.start()  
+})
+$("#btnPause").on('click', () => {
+    g.pause() 
+  })
 
-Teries.squares.forEach(sq => {
-    sq.viewer = new SquarePageViewer(sq, $("#root"))
-})
+  $("#btnLeft").on('click', () => {
+    g.control_left()
+  })
+
+  $("#btnDown").on('click', () => {
+    g.control_down()
+  })
+
+  $("#btnRight").on('click', () => {
+    g.control_right()
+  })
 
 
-// 更改中心点坐标
-// 向下移动
-$('#btnDown').on('click',function() {
-    // TeriesRule.move(Teries, {x: Teries.centerPoint.x, y:Teries.centerPoint.y + 1})
-    TeriesRule.moveDirectly(Teries, Direction.down)
-})
-// 向左移动
-$('#btnLeft').on('click', function() {
-    TeriesRule.move(Teries, Direction.left)
-})
-// 向右移动
-$('#btnRight').on('click', function() {
-    TeriesRule.move(Teries, Direction.right)
-})
-$('#rotateClock').on('click', () => {
-    // const newShape = Teries.afterRorateShape()
-    // console.log(newShape, Teries.shape)
-    TeriesRule.rotate(Teries)
-})
-
-// 向上移动
-$('#btnUp').on('click', function() {
-    Teries.centerPoint = {
-        x:Teries.centerPoint.x,
-        y: Teries.centerPoint.y - 1
-    }
-})
+  $("#rotateClock").on('click', () => {
+    g.control_rotate()
+  })
