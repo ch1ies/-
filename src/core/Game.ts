@@ -1,5 +1,6 @@
 import GameConfig from "./GameConfig";
 import { SquareGroup } from "./SquareGroup";
+import { Square } from "./Suqare";
 import { createTeries } from "./Teries";
 import { TeriesRule } from "./TeriesRule";
 import { Direction, GameStatus, GameViewer } from "./type";
@@ -15,6 +16,8 @@ export class Game {
     private _timer?:number | NodeJS.Timeout
     // 自动下落的间隔时间
     private _duration:number = 1000
+    // 当前游戏中已存在的小方块
+    private exists:Square[] = []
     constructor(private _viewer: GameViewer) {
         this.resetCenterPoint(GameConfig.nextSize.width, this.nextTeris)
         this._viewer.showNext(this.nextTeris)
@@ -55,7 +58,10 @@ export class Game {
         }
         this._timer = setInterval(() => {
             if(this.curTeris) {
-                TeriesRule.move(this.curTeris, Direction.down)
+                if (!TeriesRule.move(this.curTeris, Direction.down, this.exists)) {
+                    // 触底
+                    this.hitbutton()
+                }
             }
         }, this._duration)
 
@@ -93,24 +99,43 @@ export class Game {
      */
     control_left() {
         if(this.curTeris && this.gameStatus === GameStatus.playing) {
-            TeriesRule.move(this.curTeris, Direction.left)
+            TeriesRule.move(this.curTeris, Direction.left, this.exists)
         }  
     }
 
     control_right() {
         if(this.curTeris && this.gameStatus === GameStatus.playing) {
-            TeriesRule.move(this.curTeris, Direction.right)
+            TeriesRule.move(this.curTeris, Direction.right, this.exists)
         }  
     }
 
     control_down() {
         if(this.curTeris && this.gameStatus === GameStatus.playing) {
-            TeriesRule.move(this.curTeris, Direction.down)
+            TeriesRule.move(this.curTeris, Direction.down, this.exists)
+            // 触底
+            this.hitbutton()
         }  
     }
     control_rotate() {
         if(this.curTeris && this.gameStatus === GameStatus.playing) {
-            TeriesRule.rotate(this.curTeris)
+            TeriesRule.rotate(this.curTeris, this.exists)
         }  
     }
+    control_Directly() {
+        if(this.curTeris && this.gameStatus === GameStatus.playing) {
+            TeriesRule.moveDirectly(this.curTeris, Direction.down, this.exists)
+            // 触底
+            this.hitbutton()
+        }  
+    }
+    
+    private hitbutton() {
+        // 将当前的俄罗斯方块包含的小方块，加入到已存在的方块数组中
+        // this.exists.push(...this.curTeris!.squares)
+        this.exists = this.exists.concat(this.curTeris!.squares)
+        console.log(this.exists, 'exist---------')
+        // 切换方块
+        this.switchTeris()
+    }
+
 }

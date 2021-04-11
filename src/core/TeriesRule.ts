@@ -1,6 +1,7 @@
 import { SquareGroup } from "./SquareGroup";
 import { Point, Shape, Direction } from "./type";
 import GameConfig from "./GameConfig";
+import { Square } from "./Suqare";
 
 
 function isPoint(obj:any): obj is Point {
@@ -17,7 +18,7 @@ export class TeriesRule {
      * 判断某个形状的方块是否能够移动到目标位置
      * @param params 
      */
-    static  canIMove(shape: Shape, targetPoint: Point):boolean {
+    static  canIMove(shape: Shape, targetPoint: Point, exists:Square[]):boolean {
         // 假设 中心点已经移动到了目标位置，算出每个小方块的坐标
         const targetSquarePoints:Point[] = shape.map(it => {
             return {
@@ -35,15 +36,21 @@ export class TeriesRule {
         if (result) {
             return false
         }
+        // 是否与已有的方块有重叠
+        result = targetSquarePoints.some(p => exists.some(sq => sq.point.x === p.x && sq.point.y === p.y)
+        )
+        if (result) {
+            return false
+        }
         return true
     }
 
-    static move(teries: SquareGroup, targetPoint: Point): boolean
-    static move(teries: SquareGroup, direction: Direction):boolean
-    static move (teris:SquareGroup, targetPointOrDirection: Point | Direction):boolean {
+    static move(teries: SquareGroup, targetPoint: Point,exists:Square[]): boolean
+    static move(teries: SquareGroup, direction: Direction,exists:Square[]):boolean
+    static move (teris:SquareGroup, targetPointOrDirection: Point | Direction, exists:Square[]):boolean {
         if (isPoint(targetPointOrDirection)) {
             
-            if (this.canIMove(teris.shape, targetPointOrDirection)) {
+            if (this.canIMove(teris.shape, targetPointOrDirection, exists)) {
                 teris.centerPoint = targetPointOrDirection
                 return true
             }
@@ -67,7 +74,7 @@ export class TeriesRule {
                     y: teris.centerPoint.y
                 }
             }
-            return this.move(teris, targetPoint)
+            return this.move(teris, targetPoint, exists)
         }
     }
     /**
@@ -75,17 +82,17 @@ export class TeriesRule {
      * @param teries 
      * @param direction 
      */
-    static moveDirectly(teries:SquareGroup, direction: Direction) {
+    static moveDirectly(teries:SquareGroup, direction: Direction, exists: Square[]) {
         while(true) {
-            if (!this.move(teries, direction)) {
+            if (!this.move(teries, direction, exists)) {
                 break
             }
 
         }
     }
-    static rotate(teries:SquareGroup):boolean {
+    static rotate(teries:SquareGroup,exists:Square[]):boolean {
         const newShape = teries.afterRorateShape() // 得到旋转之后的形状
-        if (this.canIMove(newShape, teries.centerPoint)) {
+        if (this.canIMove(newShape, teries.centerPoint,exists)) {
             teries.rotate()
             return true
         } else {

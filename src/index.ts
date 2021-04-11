@@ -26,3 +26,6 @@ $("#btnPause").on('click', () => {
   $("#rotateClock").on('click', () => {
     g.control_rotate()
   })
+  $("#btnAwalyDown").on('click', () => {
+    g.control_Directly()
+  })
