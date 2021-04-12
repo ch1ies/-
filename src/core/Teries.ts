@@ -84,6 +84,21 @@ export class LineShape extends SquareGroup {
     }
     
 }
+export class OShape extends SquareGroup {
+    constructor(
+        _centerPoint: Point,
+        _color: string
+    ) {
+        super([ { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 2, y: 0 }],
+             _centerPoint, _color
+            );
+    }
+    rotate() {
+        super.rotate()
+        this.isClock = !this.isClock
+    }
+    
+}
 // export const TShape:Shape = [
 //     { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 },
 
@@ -114,7 +129,8 @@ export const shapes = [
     SShape,
     LShape,
     STShape,
-    LineShape
+    LineShape,
+    OShape
 ]
 export const Colors = [
     "red",
